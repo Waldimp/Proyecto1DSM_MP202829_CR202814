@@ -1,0 +1,3 @@
+Teclado gamer,40,10
+Mouse óptico,25,15
+Monitor 24",200,5
