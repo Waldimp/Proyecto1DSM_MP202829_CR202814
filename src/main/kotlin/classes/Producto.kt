@@ -1,10 +1,12 @@
+
 package classes
 
+import functions.limpiarPantalla
 import java.io.File
 
 data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
     companion object {
-        fun leerProductosDesdeArchivo(rutaArchivo: String): List<Producto> {
+        fun leerProductosDesdeArchivo(rutaArchivo: String): MutableList<Producto> {
             val productos = mutableListOf<Producto>()
             val archivo = File(rutaArchivo)
 
@@ -24,9 +26,20 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
             return productos
         }
 
-        fun seleccionarProducto(productos: List<Producto>) {
+        private fun escribirProductosEnArchivo(rutaArchivo: String, productos: List<Producto>) {
+            val archivo = File(rutaArchivo)
+            archivo.bufferedWriter().use { writer ->
+                productos.forEach { producto ->
+                    writer.write("${producto.nombre},${producto.precio},${producto.cantidad}")
+                    writer.newLine()
+                }
+            }
+        }
+
+        fun seleccionarProducto(productos: MutableList<Producto>, rutaArchivo: String) {
             var continuar = true
             while (continuar) {
+                limpiarPantalla()
                 println("Productos disponibles:")
                 println("0. Volver al menú principal")
                 productos.forEachIndexed { index, producto ->
@@ -34,20 +47,25 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
                 }
                 println("Seleccione un producto (escriba el número):")
                 val opcion = readLine()!!.toInt()
-                if (opcion == 0) {
-                    functions.limpiarPantalla()
-                    continuar = false
-                } else {
-                    val productoSeleccionado = productos.getOrNull(opcion - 1)
-                    productoSeleccionado?.let {
-                        procesoDeCompra(it)
-                    } ?: println("Opción no válida.")
+
+                when {
+                    opcion == 0 -> {
+                        // Volver al menú principal
+                        continuar = false
+                    }
+                    opcion in 1..productos.size -> {
+                        val productoSeleccionado = productos[opcion - 1]
+                        procesoDeCompra(productoSeleccionado, productos, rutaArchivo)
+                    }
+                    else -> {
+                        println("Opción no válida, intente nuevamente.")
+                    }
                 }
             }
         }
 
-        fun procesoDeCompra(producto: Producto) {
-            functions.limpiarPantalla()
+        private fun procesoDeCompra(producto: Producto, productos: MutableList<Producto>, rutaArchivo: String) {
+            limpiarPantalla()
             println("Ha seleccionado el producto: ${producto.nombre}")
             println("Precio por unidad: $${producto.precio}")
             println("Unidades disponibles: ${producto.cantidad}")
@@ -64,7 +82,7 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
                     }
                     unidades > 0 && unidades <= producto.cantidad -> {
                         // Si la cantidad es válida, se continúa a la confirmación
-                        confirmarCompra(producto, unidades)
+                        Producto.confirmarCompra(producto, unidades, rutaArchivo, productos)
                         cantidadValida = true
                     }
                     else -> {
@@ -75,22 +93,24 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
             }
         }
 
-        fun confirmarCompra(producto: Producto, cantidad: Int) {
-            functions.limpiarPantalla()
+        private fun confirmarCompra(producto: Producto, cantidad: Int, rutaArchivo: String, productos: MutableList<Producto>) {
+            limpiarPantalla()
             println("Confirmación de compra")
             println("Producto: ${producto.nombre}")
             println("Cantidad: $cantidad")
             println("Subtotal: $${producto.precio * cantidad}")
             println("¿Desea confirmar la compra? (S/n)")
+
             when (readLine()!!.toUpperCase()) {
                 "S" -> {
-                    functions.limpiarPantalla()
-                    // Aquí agregaríamos al carrito, pero por ahora solo simulamos
+                    limpiarPantalla()
                     println("Compra confirmada.")
-                    // actualizar la cantidad del producto
+                    // Reducir la cantidad disponible del producto
                     producto.cantidad -= cantidad
+                    // Actualizar el archivo con la nueva cantidad
+                    escribirProductosEnArchivo(rutaArchivo, productos)
                 }
-                else -> procesoDeCompra(producto)
+                else -> procesoDeCompra(producto, productos, rutaArchivo)
             }
         }
     }

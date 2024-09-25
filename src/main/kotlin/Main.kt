@@ -1,11 +1,14 @@
 import classes.Producto
+import functions.limpiarPantalla
+
+val nombreTxt: String = "productos.txt"
 
 fun main() {
     mostrarMenu()
 }
 
 fun mostrarMenu() {
-    functions.limpiarPantalla()
+    limpiarPantalla()
     println("******************************************")
     println("**     Bienvenido a SW solutions        **")
     println("******************************************")
@@ -29,9 +32,9 @@ fun mostrarMenu() {
 }
 
 fun verProductos() {
-    functions.limpiarPantalla()
-    val productos = Producto.leerProductosDesdeArchivo("productos.txt")
-    Producto.seleccionarProducto(productos)
+    limpiarPantalla()
+    val productos = Producto.leerProductosDesdeArchivo(nombreTxt)
+    Producto.seleccionarProducto(productos, nombreTxt)
     mostrarMenu()
 }
 
