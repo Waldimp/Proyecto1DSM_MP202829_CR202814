@@ -36,7 +36,7 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
             }
         }
 
-        fun seleccionarProducto(productos: MutableList<Producto>, rutaArchivo: String) {
+        fun seleccionarProducto(productos: MutableList<Producto>, rutaArchivo: String, carrito: CarritoCompras) {
             var continuar = true
             while (continuar) {
                 limpiarPantalla()
@@ -55,7 +55,7 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
                     }
                     opcion in 1..productos.size -> {
                         val productoSeleccionado = productos[opcion - 1]
-                        procesoDeCompra(productoSeleccionado, productos, rutaArchivo)
+                        procesoDeCompra(productoSeleccionado, productos, rutaArchivo, carrito)
                     }
                     else -> {
                         println("Opción no válida, intente nuevamente.")
@@ -64,7 +64,7 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
             }
         }
 
-        private fun procesoDeCompra(producto: Producto, productos: MutableList<Producto>, rutaArchivo: String) {
+        private fun procesoDeCompra(producto: Producto, productos: MutableList<Producto>, rutaArchivo: String, carrito: CarritoCompras) {
             limpiarPantalla()
             println("Ha seleccionado el producto: ${producto.nombre}")
             println("Precio por unidad: $${producto.precio}")
@@ -82,7 +82,7 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
                     }
                     unidades > 0 && unidades <= producto.cantidad -> {
                         // Si la cantidad es válida, se continúa a la confirmación
-                        Producto.confirmarCompra(producto, unidades, rutaArchivo, productos)
+                        confirmarCompra(producto, unidades, rutaArchivo, productos, carrito)
                         cantidadValida = true
                     }
                     else -> {
@@ -93,7 +93,8 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
             }
         }
 
-        private fun confirmarCompra(producto: Producto, cantidad: Int, rutaArchivo: String, productos: MutableList<Producto>) {
+
+        private fun confirmarCompra(producto: Producto, cantidad: Int, rutaArchivo: String, productos: MutableList<Producto>, carrito: CarritoCompras) {
             limpiarPantalla()
             println("Confirmación de compra")
             println("Producto: ${producto.nombre}")
@@ -107,11 +108,17 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
                     println("Compra confirmada.")
                     // Reducir la cantidad disponible del producto
                     producto.cantidad -= cantidad
+                    // Agregar el producto al carrito
+                    carrito.agregarProducto(producto, cantidad)
                     // Actualizar el archivo con la nueva cantidad
                     escribirProductosEnArchivo(rutaArchivo, productos)
+                    println("Presiona Enter para continuar.")
+                    readLine()
                 }
-                else -> procesoDeCompra(producto, productos, rutaArchivo)
+                else -> procesoDeCompra(producto, productos, rutaArchivo, carrito)
             }
         }
+
+
     }
 }
