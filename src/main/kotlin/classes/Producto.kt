@@ -52,7 +52,10 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
                         val opcion = readLine()!!.toInt()
 
                         when {
-                            opcion == 0 -> continuar = false
+                            opcion == 0 -> {
+                                continuar = false // Salir del ciclo principal
+                                opcionValida = true
+                            }
                             opcion in 1..productos.size -> {
                                 val productoSeleccionado = productos[opcion - 1]
                                 procesoDeCompra(productoSeleccionado, productos, rutaArchivo, carrito)

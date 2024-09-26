@@ -24,30 +24,38 @@ fun mostrarMenu(carrito: CarritoCompras) {
     while (!opcionValida) {
         try {
             println("Por favor, seleccione una opción:")
-            val opcion = readLine()!!.toInt()
-            when (opcion) {
-                1 -> {
-                    verProductos(carrito)
-                    opcionValida = true
-                }
-                2 -> {
-                    carrito.mostrarCarrito(nombreTxt)
-                    opcionValida = true
-                }
-                3 -> {
-                    finalizarCompra(carrito)
-                    opcionValida = true
-                }
-                4 -> {
-                    salir()
-                    opcionValida = true
-                }
-                else -> {
-                    println("Opción no válida, intenta de nuevo.")
+            val input = readLine()!!
+
+            // Verificar si la entrada está vacía
+            if (input.isBlank()) {
+                println("Debe ingresar un número.")
+            } else {
+                val opcion = input.toInt()
+                when (opcion) {
+                    1 -> {
+                        verProductos(carrito)
+                        opcionValida = true
+                    }
+                    2 -> {
+                        carrito.mostrarCarrito(nombreTxt)  // Aquí regresará correctamente si seleccionas "0"
+                        mostrarMenu(carrito)  // Volver al menú después de mostrar el carrito
+                        opcionValida = true
+                    }
+                    3 -> {
+                        finalizarCompra(carrito)
+                        opcionValida = true
+                    }
+                    4 -> {
+                        salir()
+                        opcionValida = true
+                    }
+                    else -> {
+                        println("Opción no válida, intenta de nuevo.")
+                    }
                 }
             }
         } catch (e: NumberFormatException) {
-            println("Error: Debe ingresar un número. Intente de nuevo.")
+            println("Error: Debe ingresar un número válido.")
         }
     }
 }
@@ -60,7 +68,20 @@ fun verProductos(carrito: CarritoCompras) {
 }
 
 fun finalizarCompra(carrito: CarritoCompras) {
-    println("Procesando compra...")
+    limpiarPantalla()
+    println("¿Está seguro de que desea finalizar la compra? (S/n)")
+    val confirmacion = readLine()!!.toUpperCase()
+
+    if (confirmacion == "S") {
+        carrito.generarFactura()  // Generar y mostrar la factura
+        carrito.vaciarCarrito()  // Vaciar el carrito después de la compra
+        println("Gracias por su compra.")
+    } else {
+        println("Compra cancelada. Regresando al menú principal.")
+    }
+    println("Presione Enter para continuar.")
+    readLine()
+    mostrarMenu(carrito)
 }
 
 fun salir() {

@@ -41,6 +41,7 @@ class CarritoCompras {
             println("El carrito está vacío.")
             println("Presione Enter para volver al menú principal.")
             readLine()
+            return  // Regresar al flujo principal (main.kt)
         } else {
             var continuar = true
             while (continuar) {
@@ -55,7 +56,11 @@ class CarritoCompras {
                         val opcion = readLine()!!.toInt()
 
                         when {
-                            opcion == 0 -> continuar = false
+                            opcion == 0 -> {
+                                continuar = false  // Salir del ciclo
+                                opcionValida = true
+                                return  // Salir de la función y regresar al flujo principal (main.kt)
+                            }
                             opcion in 1..obtenerCantidadProductos() -> {
                                 val productoSeleccionado = obtenerProductoPorIndice(opcion - 1)
                                 confirmarEliminacionProducto(productoSeleccionado, rutaArchivo)
@@ -110,6 +115,43 @@ class CarritoCompras {
                 println("${index + 1}. ${producto.nombre} - Cantidad: ${producto.cantidad} - Subtotal: $${producto.precio * producto.cantidad}")
             }
         }
+    }
+
+    // Función para generar la factura
+    fun generarFactura() {
+        limpiarPantalla()
+
+        if (productosEnCarrito.isEmpty()) {
+            println("No hay productos en el carrito para facturar.")
+            return
+        }
+
+        val impuestoTasa = 0.13  // Impuesto del 13%
+        var totalCompra = 0.0
+
+        println("******************** FACTURA ********************")
+        println("Producto\tCantidad\tPrecio Unitario\tSubtotal")
+        productosEnCarrito.forEach { producto ->
+            val subtotal = producto.precio * producto.cantidad
+            totalCompra += subtotal
+            println("${producto.nombre}\t${producto.cantidad}\t\t$${producto.precio}\t\t$${subtotal}")
+        }
+
+        // Calcular impuestos
+        val impuestos = totalCompra * impuestoTasa
+        val totalFinal = totalCompra + impuestos
+
+        println("-------------------------------------------------")
+        println("Subtotal: $${"%.2f".format(totalCompra)}")  // Mostrar 2 decimales
+        println("Impuestos (13%): $${"%.2f".format(impuestos)}")  // Mostrar 2 decimales
+        println("Total Final: $${"%.2f".format(totalFinal)}")  // Mostrar 2 decimales
+        println("*************************************************")
+    }
+
+    // Función para vaciar el carrito después de finalizar la compra
+    fun vaciarCarrito() {
+        productosEnCarrito.clear()
+        println("El carrito ha sido vaciado.")
     }
 
     // Función para calcular el total de todos los productos en el carrito
