@@ -26,7 +26,7 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
             return productos
         }
 
-        private fun escribirProductosEnArchivo(rutaArchivo: String, productos: List<Producto>) {
+        fun escribirProductosEnArchivo(rutaArchivo: String, productos: List<Producto>) {
             val archivo = File(rutaArchivo)
             archivo.bufferedWriter().use { writer ->
                 productos.forEach { producto ->
@@ -45,20 +45,23 @@ data class Producto(val nombre: String, val precio: Double, var cantidad: Int) {
                 productos.forEachIndexed { index, producto ->
                     println("${index + 1}. ${producto.nombre} - Precio: $${producto.precio} - Cantidad disponible: ${producto.cantidad}")
                 }
-                println("Seleccione un producto (escriba el número):")
-                val opcion = readLine()!!.toInt()
+                var opcionValida = false
+                while (!opcionValida) {
+                    try {
+                        println("Seleccione un producto (escriba el número):")
+                        val opcion = readLine()!!.toInt()
 
-                when {
-                    opcion == 0 -> {
-                        // Volver al menú principal
-                        continuar = false
-                    }
-                    opcion in 1..productos.size -> {
-                        val productoSeleccionado = productos[opcion - 1]
-                        procesoDeCompra(productoSeleccionado, productos, rutaArchivo, carrito)
-                    }
-                    else -> {
-                        println("Opción no válida, intente nuevamente.")
+                        when {
+                            opcion == 0 -> continuar = false
+                            opcion in 1..productos.size -> {
+                                val productoSeleccionado = productos[opcion - 1]
+                                procesoDeCompra(productoSeleccionado, productos, rutaArchivo, carrito)
+                                opcionValida = true
+                            }
+                            else -> println("Opción no válida, intente nuevamente.")
+                        }
+                    } catch (e: NumberFormatException) {
+                        println("Error: Debe ingresar un número válido.")
                     }
                 }
             }
