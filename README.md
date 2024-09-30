@@ -84,3 +84,59 @@ Gracias por su compra.
 ### 5. Fin del programa
 
 Gracias por visitar SW Solutions. ¡Hasta luego!
+
+# Documentación Breve del Proyecto
+
+## Descripción General
+
+Este proyecto es una aplicación de consola que simula un sistema de compra para una tienda de periféricos de computadora. Los usuarios pueden ver productos, agregarlos a un carrito de compras, eliminar productos, y finalizar una compra generando una factura con detalles de los productos comprados e impuestos.
+
+## Estructura del Código
+
+### 1. Main.kt
+- Archivo principal que inicia la aplicación y maneja el flujo principal del sistema.
+- **Función mostrarMenu**: muestra el menú de opciones donde el usuario puede ver productos, ver el carrito, finalizar la compra, o salir.
+- **Función verProductos**: muestra los productos disponibles y permite al usuario seleccionar productos para agregarlos al carrito.
+- **Función finalizarCompra**: permite al usuario confirmar la compra, genera la factura y vacía el carrito.
+- **Función salir**: finaliza la aplicación.
+
+### 2. Producto.kt
+- Clase que representa los productos disponibles para la venta.
+- **Función leerProductosDesdeArchivo**: carga los productos desde un archivo .txt.
+- **Función escribirProductosEnArchivo**: guarda los productos actualizados (con las cantidades restantes) en el archivo.
+- **Función seleccionarProducto**: permite al usuario seleccionar productos para comprarlos.
+- **Función procesoDeCompra y confirmarCompra**: manejan la lógica de compra de productos y agregan los productos al carrito.
+
+### 3. CarritoCompras.kt
+- Clase que maneja el carrito de compras.
+- **Función agregarProducto**: agrega un producto al carrito o aumenta su cantidad si ya existe en el carrito.
+- **Función eliminarProducto**: permite eliminar un producto del carrito y devuelve la cantidad eliminada al inventario.
+- **Función mostrarCarrito**: muestra el contenido del carrito y permite eliminar productos.
+- **Función generarFactura**: genera una factura detallada, incluyendo subtotales e impuestos.
+- **Función vaciarCarrito**: vacía el carrito después de una compra.
+- Funciones adicionales: como calcular el total del carrito, verificar si está vacío, entre otras.
+
+### Archivos
+
+- **productos.txt**: Este archivo contiene los productos disponibles en el formato nombre,precio,cantidad. Es cargado por la aplicación y actualizado cuando los productos son comprados.
+
+## Cómo Ejecutar la Aplicación
+
+### 1. Requisitos Previos
+- Tener instalado un entorno de desarrollo Kotlin (por ejemplo, IntelliJ IDEA con el plugin de Kotlin).
+- Asegurarse de que el archivo productos.txt esté en el mismo directorio que el código de la aplicación y contenga productos en el siguiente formato:
+
+  teclado,50.0,10
+  monitor,200.0,5
+  mouse,30.0,20
+
+
+### 2. Pasos para Ejecutar
+- Descargue o clone el código del proyecto en su entorno de desarrollo.
+- Asegúrese de que todos los archivos de código estén en su lugar, incluyendo las clases Producto.kt, CarritoCompras.kt, y las funciones generales como limpiarPantalla().
+- Abra el archivo Main.kt y ejecute el método main() desde su entorno.
+- Interactúe con el sistema utilizando las opciones que aparecen en la consola. Use los números del menú para navegar a través de las funcionalidades como ver productos, agregar productos al carrito, o finalizar una compra.
+
+## Consideraciones Finales
+- *Archivos Externos*: El sistema depende de productos.txt para cargar la información de los productos. Asegúrese de actualizar este archivo para mantener un inventario correcto.
+- *Errores*: El código maneja errores comunes como la entrada incorrecta del usuario utilizando bloques try-catch para prevenir que la aplicación falle por un mal ingreso de datos.
